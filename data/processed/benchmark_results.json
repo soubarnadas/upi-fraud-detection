@@ -1,0 +1,184 @@
+{
+  "n_paysim": 15,
+  "n_ieee": 32,
+  "imbalance_results": {
+    "Class_Weighting": {
+      "roc_auc": 0.9976,
+      "pr_auc": 0.8823,
+      "brier_score": 0.01408,
+      "recall_at_2pct_budget": 0.9,
+      "precision_at_2pct_budget": 0.36,
+      "review_threshold": 0.5973
+    },
+    "Random_Undersampling": {
+      "roc_auc": 0.9993,
+      "pr_auc": 0.9526,
+      "brier_score": 0.00258,
+      "recall_at_2pct_budget": 1.0,
+      "precision_at_2pct_budget": 0.4,
+      "review_threshold": 0.1293
+    },
+    "SMOTE": {
+      "roc_auc": 0.9994,
+      "pr_auc": 0.9407,
+      "brier_score": 0.00295,
+      "recall_at_2pct_budget": 1.0,
+      "precision_at_2pct_budget": 0.4,
+      "review_threshold": 0.1657
+    }
+  },
+  "best_imbalance_strat": "Random_Undersampling",
+  "model_evaluations": {
+    "LightGBM": {
+      "roc_auc": 0.9994,
+      "pr_auc": 0.9556,
+      "brier_score": 0.00908,
+      "recall_at_2pct_budget": 1.0,
+      "precision_at_2pct_budget": 0.4,
+      "review_threshold": 0.4679
+    },
+    "XGBoost": {
+      "roc_auc": 0.9985,
+      "pr_auc": 0.906,
+      "brier_score": 0.01303,
+      "recall_at_2pct_budget": 1.0,
+      "precision_at_2pct_budget": 0.4,
+      "review_threshold": 0.5918
+    },
+    "LogisticRegression": {
+      "roc_auc": 0.9973,
+      "pr_auc": 0.8942,
+      "brier_score": 0.02796,
+      "recall_at_2pct_budget": 0.9,
+      "precision_at_2pct_budget": 0.36,
+      "review_threshold": 0.7748
+    }
+  },
+  "selected_model": "LightGBM",
+  "calibrator_name": "Platt Scaling",
+  "brier_comparison": {
+    "raw": 0.00908,
+    "platt": 0.0008,
+    "isotonic": 0.00097
+  },
+  "review_threshold": 0.0,
+  "val_metrics": {
+    "roc_auc": 0.9994,
+    "pr_auc": 0.9556,
+    "brier_score": 0.00908,
+    "recall_at_2pct_budget": 1.0,
+    "precision_at_2pct_budget": 0.4,
+    "review_threshold": 0.4679
+  },
+  "test_metrics": {
+    "roc_auc": 0.9281,
+    "pr_auc": 0.9295,
+    "brier_score": 0.00104,
+    "recall_at_2pct_budget": 0.8947,
+    "precision_at_2pct_budget": 0.4474,
+    "review_threshold": 0.0
+  },
+  "temporal_drift_delta": -0.0261,
+  "drift_summary": "PR-AUC: 0.9556 (Val) vs 0.9295 (Test), drift delta -0.0261",
+  "sample_explanations": [
+    {
+      "test_index": 0,
+      "true_label": 0,
+      "calibrated_probability": 0.0,
+      "risk_score": 0,
+      "top_factors": [
+        {
+          "feature": "is_account_draining",
+          "shap_contribution": 0.0221,
+          "feature_value": 1.0
+        },
+        {
+          "feature": "log_oldbalanceDest",
+          "shap_contribution": 0.0055,
+          "feature_value": 11.1145
+        },
+        {
+          "feature": "is_night_txn",
+          "shap_contribution": 0.0043,
+          "feature_value": 0.0
+        },
+        {
+          "feature": "hour_of_day",
+          "shap_contribution": 0.003,
+          "feature_value": 13.0
+        },
+        {
+          "feature": "log_amount",
+          "shap_contribution": 0.0,
+          "feature_value": 8.2358
+        }
+      ]
+    },
+    {
+      "test_index": 1,
+      "true_label": 0,
+      "calibrated_probability": 0.0,
+      "risk_score": 0,
+      "top_factors": [
+        {
+          "feature": "log_oldbalanceDest",
+          "shap_contribution": 0.0002,
+          "feature_value": 9.0389
+        },
+        {
+          "feature": "amount_to_balance_orig",
+          "shap_contribution": 0.0002,
+          "feature_value": 0.7837
+        },
+        {
+          "feature": "is_night_txn",
+          "shap_contribution": 0.0001,
+          "feature_value": 0.0
+        },
+        {
+          "feature": "is_cash_out",
+          "shap_contribution": 0.0001,
+          "feature_value": 1.0
+        },
+        {
+          "feature": "log_amount",
+          "shap_contribution": 0.0,
+          "feature_value": 7.6813
+        }
+      ]
+    },
+    {
+      "test_index": 2,
+      "true_label": 0,
+      "calibrated_probability": 0.0,
+      "risk_score": 0,
+      "top_factors": [
+        {
+          "feature": "log_amount",
+          "shap_contribution": 0.0005,
+          "feature_value": 7.2758
+        },
+        {
+          "feature": "log_oldbalanceDest",
+          "shap_contribution": 0.0001,
+          "feature_value": 7.9827
+        },
+        {
+          "feature": "log_oldbalanceOrg",
+          "shap_contribution": 0.0,
+          "feature_value": 8.2767
+        },
+        {
+          "feature": "amount_to_balance_orig",
+          "shap_contribution": 0.0,
+          "feature_value": 0.3673
+        },
+        {
+          "feature": "is_account_draining",
+          "shap_contribution": 0.0,
+          "feature_value": 0.0
+        }
+      ]
+    }
+  ]
+}

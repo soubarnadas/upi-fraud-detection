@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "upi-fraud-detection"
+version = "1.0.0"
+description = "A Leakage-Aware, Temporally Validated and Explainable UPI Fraud Detection System"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [
+    {name = "Soubarna", email = "soubarna@msit.edu.in"}
+]
+dependencies = [
+    "numpy>=1.23.0",
+    "scipy>=1.9.0",
+    "pandas>=1.5.0",
+    "fastapi>=0.95.0",
+    "uvicorn>=0.21.0",
+    "pydantic>=1.10.0"
+]
