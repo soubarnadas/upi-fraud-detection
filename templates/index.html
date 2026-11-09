@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>UPI Fraud Detection & Explainability Dashboard</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --primary: #38bdf8;
+      --primary-hover: #0284c7;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --risk-low: #10b981;
+      --risk-med: #f59e0b;
+      --risk-high: #f97316;
+      --risk-crit: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      padding: 24px;
+      line-height: 1.4;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    header {
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-title h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-title p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-top: 3px;
+    }
+
+    .badge-pill {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+      padding: 5px 14px;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    /* Scenarios Bar */
+    .scenarios-section {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+    }
+
+    .scenarios-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .scenarios-flex {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .btn-scenario {
+      flex: 1;
+      background: #243247;
+      border: 1px solid #3b4d66;
+      color: var(--text-main);
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .btn-scenario strong {
+      display: block;
+      font-size: 0.85rem;
+      margin-bottom: 3px;
+    }
+
+    .btn-scenario span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: block;
+      line-height: 1.3;
+    }
+
+    /* Main Flex Layout */
+    .main-flex {
+      display: flex;
+      gap: 20px;
+      width: 100%;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 20px 22px;
+    }
+
+    .card-left {
+      flex: 1;
+    }
+
+    .card-right {
+      flex: 1.25;
+    }
+
+    .card h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #2d3a4f;
+      padding-bottom: 8px;
+    }
+
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 13px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    input, select {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      color: #fff;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--primary);
+      color: #0f172a;
+      border: none;
+      padding: 11px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+
+    /* Results Panel */
+    .risk-banner {
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .risk-score-box {
+      text-align: center;
+    }
+
+    .risk-number {
+      font-size: 2.8rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .risk-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      margin-top: 3px;
+    }
+
+    .risk-tier-badge {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .action-badge {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-top: 6px;
+      color: #fff;
+    }
+
+    /* Tier Coloring */
+    .tier-CRITICAL {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+    .tier-CRITICAL .risk-number, .tier-CRITICAL .risk-tier-badge {
+      color: var(--risk-crit);
+    }
+
+    .tier-HIGH {
+      background: rgba(249, 115, 22, 0.15);
+      border: 1px solid rgba(249, 115, 22, 0.4);
+    }
+    .tier-HIGH .risk-number, .tier-HIGH .risk-tier-badge {
+      color: var(--risk-high);
+    }
+
+    .tier-MEDIUM {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+    .tier-MEDIUM .risk-number, .tier-MEDIUM .risk-tier-badge {
+      color: var(--risk-med);
+    }
+
+    .tier-LOW {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .tier-LOW .risk-number, .tier-LOW .risk-tier-badge {
+      color: var(--risk-low);
+    }
+
+    /* Metrics Summary Flex */
+    .metrics-summary {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .metric-pill {
+      flex: 1;
+      background: #182234;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 10px 8px;
+      text-align: center;
+    }
+
+    .metric-pill span {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .metric-pill strong {
+      font-size: 1.05rem;
+      color: #fff;
+    }
+
+    /* Rules section */
+    .rules-list {
+      margin-bottom: 16px;
+    }
+
+    .rule-tag {
+      display: inline-block;
+      background: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+
+    .rule-tag-ok {
+      display: inline-block;
+      background: rgba(16, 185, 129, 0.15);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 4px 10px;
+      border-radius: 5px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* SHAP Explanations */
+    .shap-section h3 {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+    }
+
+    .shap-item {
+      margin-bottom: 9px;
+    }
+
+    .shap-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      margin-bottom: 3px;
+    }
+
+    .shap-bar-bg {
+      background: #0f172a;
+      height: 7px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .shap-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: var(--risk-crit);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="header-title">
+        <h1>🛡️ UPI Fraud Detection Engine</h1>
+        <p>Pre-Authorization Machine Learning Scoring & SHAP Attribution Dashboard</p>
+      </div>
+      <div>
+        <span class="badge-pill">Production v1.0.0</span>
+      </div>
+    </header>
+
+    <!-- Preset Test Scenarios -->
+    <div class="scenarios-section">
+      <div class="scenarios-title">Quick Test Scenarios (Pre-Filled Dummy Datasets)</div>
+      <div class="scenarios-flex">
+        <a href="/?scenario=drain" style="text-decoration: none; flex: 1;">
+          <div class="btn-scenario">
+            <strong>🚨 Scenario 1: Account Draining Mule</strong>
+            <span>Drains ₹95k balance at 3:00 AM to new destination account</span>
+          </div>
+        </a>
+        <a href="/?scenario=normal" style="text-decoration: none; flex: 1;">
+          <div class="btn-scenario">
+            <strong>☕ Scenario 2: Routine Merchant Grocery</strong>
+            <span>₹350 afternoon payment to verified merchant</span>
+          </div>
+        </a>
+        <a href="/?scenario=night_burst" style="text-decoration: none; flex: 1;">
+          <div class="btn-scenario">
+            <strong>🌙 Scenario 3: High-Velocity Night Burst</strong>
+            <span>₹48k night payment from unverified device</span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="main-flex">
+      <!-- Input Transaction Form -->
+      <div class="card card-left">
+        <h2>Transaction Details</h2>
+        <form id="txForm" method="POST" action="/score">
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="step">Hour Index (Step: 1-720)</label>
+              <input type="number" id="step" name="step" value="{{ tx.step }}" min="1" max="720" required>
+            </div>
+            <div class="form-group">
+              <label for="type">Transaction Type</label>
+              <select id="type" name="type">
+                <option value="TRANSFER" {% if tx.type == 'TRANSFER' %}selected{% endif %}>TRANSFER</option>
+                <option value="CASH_OUT" {% if tx.type == 'CASH_OUT' %}selected{% endif %}>CASH_OUT</option>
+                <option value="PAYMENT" {% if tx.type == 'PAYMENT' %}selected{% endif %}>PAYMENT</option>
+                <option value="DEBIT" {% if tx.type == 'DEBIT' %}selected{% endif %}>DEBIT</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="amount">Transaction Amount (₹ INR)</label>
+            <input type="number" id="amount" name="amount" step="0.01" value="{{ tx.amount }}" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nameOrig">Sender Identifier / VPA</label>
+              <input type="text" id="nameOrig" name="nameOrig" value="{{ tx.nameOrig }}" required>
+            </div>
+            <div class="form-group">
+              <label for="oldbalanceOrg">Sender Balance (₹)</label>
+              <input type="number" id="oldbalanceOrg" name="oldbalanceOrg" step="0.01" value="{{ tx.oldbalanceOrg }}" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nameDest">Beneficiary Identifier / VPA</label>
+              <input type="text" id="nameDest" name="nameDest" value="{{ tx.nameDest }}" required>
+            </div>
+            <div class="form-group">
+              <label for="oldbalanceDest">Beneficiary Balance (₹)</label>
+              <input type="number" id="oldbalanceDest" name="oldbalanceDest" step="0.01" value="{{ tx.oldbalanceDest }}" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="device_type">Device Verification State</label>
+            <select id="device_type" name="device_type">
+              <option value="mobile" {% if tx.device_type == 'mobile' %}selected{% endif %}>Verified Mobile UPI App</option>
+              <option value="desktop" {% if tx.device_type == 'desktop' %}selected{% endif %}>Web Browser Portal</option>
+              <option value="unknown" {% if tx.device_type == 'unknown' %}selected{% endif %}>Unverified New Device Fingerprint</option>
+            </select>
+          </div>
+
+          <button type="submit" id="submitBtn" class="btn-submit">⚡ Score Pre-Authorization Risk</button>
+        </form>
+      </div>
+
+      <!-- Live Evaluation & Explainability Results -->
+      <div class="card card-right" id="resultsCard">
+        <h2>Risk Assessment & Explanations</h2>
+
+        <!-- Risk Score Banner -->
+        <div class="risk-banner tier-{{ result.risk_tier }}" id="riskBanner">
+          <div class="risk-score-box">
+            <div class="risk-number" id="riskNumber">{{ result.risk_score }}</div>
+            <div class="risk-label">Risk Score (0-100)</div>
+          </div>
+          <div>
+            <span class="risk-tier-badge" id="riskTier">{{ result.risk_tier }} RISK</span>
+            <div class="action-badge" id="actionBadge">Policy: {{ result.action.replace('_', ' ') }}</div>
+          </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="metrics-summary">
+          <div class="metric-pill">
+            <span>Calibrated Probability</span>
+            <strong id="probBadge">{{ "%.2f"|format(result.calibrated_probability * 100) }}%</strong>
+          </div>
+          <div class="metric-pill">
+            <span>Review Threshold</span>
+            <strong>p &ge; 0.0000 (Top 2%)</strong>
+          </div>
+          <div class="metric-pill">
+            <span>Inference Latency</span>
+            <strong id="latencyBadge">{{ result.latency_ms }} ms</strong>
+          </div>
+        </div>
+
+        <!-- Active Rule Flags -->
+        <div class="rules-list" id="rulesContainer">
+          <label>Triggered Business Rule Flags</label>
+          {% if result.rule_flags %}
+            {% for flag in result.rule_flags %}
+              <span class="rule-tag">⚠️ {{ flag }}</span>
+            {% endfor %}
+          {% else %}
+            <span class="rule-tag-ok">✓ No anomalies triggered. Complies with behavioural baseline.</span>
+          {% endif %}
+        </div>
+
+        <!-- Top SHAP Explanations -->
+        <div class="shap-section">
+          <h3>Top SHAP Feature Attributions (Local Explanation)</h3>
+          {% for factor in result.top_shap_factors %}
+            <div class="shap-item">
+              <div class="shap-header">
+                <span><strong>{{ factor.feature }}</strong> (value: {{ factor.feature_value }})</span>
+                <span>+{{ factor.shap_contribution }} impact</span>
+              </div>
+              <div class="shap-bar-bg">
+                <div class="shap-bar-fill" style="width: {{ [[factor.shap_contribution * 250, 5]|max, 100]|min }}%;"></div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
