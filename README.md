@@ -1,6 +1,6 @@
 # UPI Fraud Detection System
 
-[![CI Pipeline](https://github.com/soubarna/upi-fraud-detection/actions/workflows/ci.yml/badge.svg)](https://github.com/soubarna/upi-fraud-detection/actions)
+[![CI Pipeline](https://github.com/soubarnadas/upi-fraud-detection/actions/workflows/ci.yml/badge.svg)](https://github.com/soubarnadas/upi-fraud-detection/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 
@@ -98,7 +98,7 @@ All figures are empirically validated using chronological splits across the synt
 ### 1. Installation
 
 ```bash
-git clone https://github.com/soubarna/upi-fraud-detection.git
+git clone https://github.com/soubarnadas/upi-fraud-detection.git
 cd upi-fraud-detection
 pip install -r requirements.txt
 ```
